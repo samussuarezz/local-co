@@ -1,0 +1,16 @@
+{
+  "name": "Local.co · Planes hechos por quienes viven allí",
+  "short_name": "Local.co",
+  "description": "Encuentra y reserva experiencias locales y comunitarias en Colombia.",
+  "lang": "es-CO",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0E1530",
+  "theme_color": "#0E1530",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
