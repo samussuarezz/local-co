@@ -25,10 +25,10 @@
   color-scheme: light;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;margin:0;background:var(--bg)}
+html,body{height:100%;margin:0;background:var(--navy)}
 body{font-family:var(--font);font-size:14px;line-height:1.5;color:var(--ink);overscroll-behavior:none}
 button{font:inherit;color:inherit}
-#app{position:fixed;inset:0;max-width:480px;margin:0 auto;background:var(--bg);overflow:hidden;isolation:isolate}
+#app{position:fixed;top:0;left:0;right:0;bottom:0;height:var(--appH,auto);max-width:480px;margin:0 auto;background:var(--navy);overflow:hidden;isolation:isolate}
 @media (min-width:520px){
   html,body{background:#0A0A0E}
   body{display:grid;place-items:center;padding:20px}
@@ -584,6 +584,7 @@ profile(){
     <div class="install"><b>Instálala en tu teléfono</b>
       <span>iPhone: abre en Safari, toca Compartir y luego "Agregar a inicio".</span>
       <span>Android: abre en Chrome, toca el menú ⋮ y luego "Instalar app".</span></div>
+    <p class="small tnum" style="margin:0;text-align:center;opacity:.7">${(navigator.standalone||matchMedia("(display-mode: standalone)").matches)?"App instalada":"Abierta en el navegador"} · ${innerWidth}×${innerHeight} · pantalla ${screen.width}×${screen.height}</p>
   </div>`;
 },
 compare(){
@@ -809,6 +810,16 @@ function sendMsg(t){
   const ans = ANSWERS[t] || `Gracias por escribir. ${S.plan.hostShort} responde en promedio en una hora; te avisamos aquí.`;
   setTimeout(()=>{ S.chat.push({me:false,t:ans}); if(S.screen==="chat"){ rerender(); const s=screens.querySelector(".screen"); s.scrollTop=s.scrollHeight; } }, 1100);
 }
+
+/* iPhone instalado: usar el alto real de la pantalla (iOS recorta el alto en modo app) */
+function fitScreen(){
+  const ios = /iPhone|iPod/.test(navigator.userAgent);
+  if(ios && (navigator.standalone || matchMedia("(display-mode: standalone)").matches)){
+    const h = Math.max(innerHeight, matchMedia("(orientation: portrait)").matches ? screen.height : screen.width);
+    document.documentElement.style.setProperty("--appH", h + "px");
+  }
+}
+fitScreen(); addEventListener("resize", fitScreen); addEventListener("orientationchange", ()=>setTimeout(fitScreen,300));
 
 /* Inicio */
 render("splash","none");
