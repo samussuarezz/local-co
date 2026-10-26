@@ -88,6 +88,11 @@ button{font:inherit;color:inherit}
 .tabbar button.on{background:var(--blue);color:#fff}
 .tabbar .dot{position:absolute;top:8px;right:calc(50% - 16px);width:8px;height:8px;border-radius:50%;background:var(--yellow)}
 
+/* modos de pantalla (ver Perfil) */
+html.sm-b,html.sm-b body,html.sm-c,html.sm-c body{height:auto;min-height:100%;overflow:hidden}
+html.sm-b #app{position:absolute;top:0;left:0;right:0;bottom:auto;height:100lvh}
+html.sm-c #app{position:absolute;top:0;left:0;right:0;bottom:auto;height:var(--scrH,100vh)}
+
 /* componentes: botones, stepper, menú contextual */
 .btn.danger{background:var(--red)}
 .btn.outline{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
@@ -670,7 +675,12 @@ profile(){
     <div class="install"><b>Instálala en tu teléfono</b>
       <span>iPhone: abre en Safari, toca Compartir y luego "Agregar a inicio".</span>
       <span>Android: abre en Chrome, toca el menú ⋮ y luego "Instalar app".</span></div>
-    <p class="small tnum" style="margin:0;text-align:center;opacity:.7">${(navigator.standalone||matchMedia("(display-mode: standalone)").matches)?"App instalada":"Abierta en el navegador"} · ${innerWidth}×${innerHeight} · pantalla ${screen.width}×${screen.height}</p>
+    <div class="card" style="display:flex;flex-direction:column;gap:10px">
+      <div style="font-weight:600;font-size:14px">Ajuste de pantalla</div>
+      <div class="small" style="margin-top:-6px">Si ves una franja abajo, prueba cada modo y deja el que llene la pantalla.</div>
+      <div class="seg"><span class="thumb" style="transform:translateX(${["a","b","c"].indexOf(SCREEN_MODE)*100}%)"></span>${[["a","Modo 1"],["b","Modo 2"],["c","Modo 3"]].map(([k,l])=>`<button class="${k===SCREEN_MODE?"on":""}" data-act="smode" data-v="${k}">${l}</button>`).join("")}</div>
+    </div>
+    <p class="small tnum" style="margin:0;text-align:center;opacity:.7">${(navigator.standalone||matchMedia("(display-mode: standalone)").matches)?"App instalada":"Abierta en el navegador"} · vista ${innerWidth}×${innerHeight} · pantalla ${screen.width}×${screen.height} · ${screenProbe()}</p>
   </div>`;
 },
 compare(){
@@ -884,6 +894,7 @@ app.addEventListener("click", e=>{
     case "tag": S.tags.has(v)?S.tags.delete(v):S.tags.add(v); { const txt = document.getElementById("rv")?.value || ""; rerender(); const r=document.getElementById("rv"); if(r) r.value=txt; } break;
     case "sendreview": { const tr = S.trips.find(t=>t.code===S.rating); if(tr){ tr.rated=true; tr.stars=S.stars; } save(); toast(`¡Gracias! Tu reseña ayuda a ${S.plan.org}.`); S.stack=[]; render("trips","back"); break; }
     case "cancelinfo": toast("Puedes cancelar gratis hasta 24 h antes desde el chat con tu anfitrión."); break;
+    case "smode": SCREEN_MODE=v; try{ localStorage.setItem("localco:smode",v); }catch(e){} fitScreen(); rerender(); toast("Modo "+({a:1,b:2,c:3}[v])+" activado. Revisa la barra de abajo."); break;
     case "reset": try{ Object.keys(localStorage).filter(k=>k.startsWith("localco:")).forEach(k=>localStorage.removeItem(k)); }catch(err){}
       S.liked=new Set(); S.trips=[]; S.user=null; S.stack=[]; render("home","enter"); toast("Demo reiniciada"); break;
   }
@@ -916,11 +927,23 @@ function sendMsg(t){
 /* iPhone instalado: usar el alto real de la pantalla (iOS recorta el alto en modo app) */
 /* iOS 26.0 recorta la vista de la app instalada: la franja que sobra abajo ya sirve de zona segura,
    así que medimos ese recorte (--gap) y lo descontamos del margen inferior. */
+/* Modo de pantalla elegido en Perfil: a = vista que da iOS, b = 100lvh, c = alto real de la pantalla */
+var SCREEN_MODE = (()=>{ try{ return localStorage.getItem("localco:smode") || "a"; }catch(e){ return "a"; } })();
+function screenProbe(){
+  const d=document.createElement("div"); d.style.cssText="position:fixed;top:0;left:0;width:1px;visibility:hidden;pointer-events:none";
+  const m=v=>{ d.style.height=v; document.body.appendChild(d); const h=Math.round(d.getBoundingClientRect().height); d.remove(); return h; };
+  return "lvh "+m("100lvh")+" · svh "+m("100svh")+" · outer "+outerHeight+" · sb "+(getComputedStyle(document.documentElement).getPropertyValue("--gap")||"0").trim()+" · modo "+({a:1,b:2,c:3}[SCREEN_MODE]);
+}
+function applyScreenMode(){
+  const r=document.documentElement; r.classList.remove("sm-b","sm-c"); if(SCREEN_MODE!=="a") r.classList.add("sm-"+SCREEN_MODE);
+  r.style.setProperty("--scrH", (matchMedia("(orientation: portrait)").matches ? screen.height : screen.width) + "px");
+}
 function fitScreen(){
+  applyScreenMode();
   const ios = /iPhone|iPod/.test(navigator.userAgent);
   const standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
   let gap = 0;
-  if(ios && standalone){
+  if(ios && standalone && SCREEN_MODE==="a"){
     const full = matchMedia("(orientation: portrait)").matches ? screen.height : screen.width;
     gap = full - innerHeight; if(gap < 20) gap = 0;
   }
