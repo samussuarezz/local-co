@@ -928,7 +928,11 @@ function sendMsg(t){
 /* iOS 26.0 recorta la vista de la app instalada: la franja que sobra abajo ya sirve de zona segura,
    así que medimos ese recorte (--gap) y lo descontamos del margen inferior. */
 /* Modo de pantalla elegido en Perfil: a = vista que da iOS, b = 100lvh, c = alto real de la pantalla */
-var SCREEN_MODE = (()=>{ try{ return localStorage.getItem("localco:smode") || "a"; }catch(e){ return "a"; } })();
+var SCREEN_MODE = (()=>{
+  const iosApp = /iPhone|iPod/.test(navigator.userAgent) && (navigator.standalone || matchMedia("(display-mode: standalone)").matches);
+  const def = iosApp ? "b" : "a"; /* en iPhone instalado el modo 2 (100lvh) llena toda la pantalla */
+  try{ return localStorage.getItem("localco:smode") || def; }catch(e){ return def; }
+})();
 function screenProbe(){
   const d=document.createElement("div"); d.style.cssText="position:fixed;top:0;left:0;width:1px;visibility:hidden;pointer-events:none";
   const m=v=>{ d.style.height=v; document.body.appendChild(d); const h=Math.round(d.getBoundingClientRect().height); d.remove(); return h; };
