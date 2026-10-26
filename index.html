@@ -82,11 +82,26 @@ button{font:inherit;color:inherit}
 .topbar .title{font-weight:600;font-size:15px;text-align:center;flex:1}
 
 /* tabbar */
-.tabbar{position:absolute;left:12px;right:12px;bottom:max(8px, calc(var(--sb) - 14px));background:var(--ink);border-radius:24px;padding:8px;display:flex;justify-content:space-between;z-index:30;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .3s}
+.tabbar{position:absolute;left:0;right:0;bottom:0;background:var(--navy);border-radius:24px 24px 0 0;padding:8px 10px max(8px, var(--sb));display:flex;justify-content:space-between;z-index:30;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .3s}
 .tabbar.hide{transform:translateY(160%)}
 .tabbar button{flex:1;height:50px;border-radius:16px;border:0;background:none;color:#8C8F9C;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;font-size:10px;position:relative}
 .tabbar button.on{background:var(--blue);color:#fff}
 .tabbar .dot{position:absolute;top:8px;right:calc(50% - 16px);width:8px;height:8px;border-radius:50%;background:var(--yellow)}
+
+/* fotos y regiones */
+.ph{width:100%;height:100%;object-fit:cover;display:block}
+.regions{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin-inline:-18px;padding-inline:18px;scroll-snap-type:x mandatory}
+.regions::-webkit-scrollbar{display:none}
+.rcard{flex:0 0 64%;height:190px;border-radius:20px;overflow:hidden;position:relative;border:0;padding:0;cursor:pointer;scroll-snap-align:start;color:#fff;text-align:left;background:var(--navy)}
+.rcard img{position:absolute;inset:0}
+.rcard::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(10,12,30,0) 35%,rgba(10,12,30,.85))}
+.rcard div{position:absolute;left:14px;right:14px;bottom:12px;z-index:1;display:flex;flex-direction:column;gap:2px}
+.rcard b{font-size:18px;font-weight:600}
+.rcard span{font-size:11.5px;opacity:.9;line-height:1.35}
+.rhead{display:flex;flex-direction:column;gap:0;margin-top:4px}
+.rhead h3{margin:0;font-size:16px;font-weight:600}
+.credits{display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--muted)}
+.credits a{color:var(--blue)}
 
 /* barra de estado y bandera */
 .sbar{position:absolute;top:0;left:0;right:0;height:var(--st);background:var(--navy);z-index:55;pointer-events:none}
@@ -269,39 +284,75 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">"
    DATOS DE EJEMPLO (reemplazar con hallazgos de las entrevistas)
 ------------------------------------------------------------------ */
 const PLANS = [
-  {id:"cafe", t:"Del grano a la taza", place:"Salento, Quindío", region:"Eje Cafetero", cat:"Café", host:"Doña Rosa Giraldo", hostShort:"Rosa", org:"Finca La Esperanza", since:"Anfitriona desde 2021", price:95000, dur:"4 h", group:"Máx. 8", lang:"ES · EN", rating:4.9, reviews:128, comm:true, c:["#2E6B45","#A9C98B","#F4C77A"], hc:"#2E6B45",
+  {id:"cafe", t:"Del grano a la taza", place:"Salento, Quindío", region:"Andina", img:"cafe", cat:"Café", host:"Doña Rosa Giraldo", hostShort:"Rosa", org:"Finca La Esperanza", since:"Anfitriona desde 2021", price:95000, dur:"4 h", group:"Máx. 8", lang:"ES · EN", rating:4.9, reviews:128, comm:true, c:["#2E6B45","#A9C98B","#F4C77A"], hc:"#2E6B45",
    desc:"Recorre los cafetales con la familia Giraldo, recoge tu propio grano y aprende a tostarlo y prepararlo en método de filtrado.",
    inc:["Recorrido guiado por la finca","Taller de tostión y barismo","Bolsa de 250 g de café de la finca"], exc:["Transporte desde Salento (se puede agregar)"],
    meet:"Parque principal de Salento, frente a la iglesia. Rosa te recoge en Willys.", access:"Terreno inclinado y con barro en época de lluvias. No apto para silla de ruedas.",
    rev:[{n:"Valentina · Bogotá",s:5,t:"Rosa nos hizo sentir en familia. El café que tostamos fue el mejor del viaje."},{n:"Tom · Países Bajos",s:5,t:"Very authentic, you can feel the money goes to the family."}]},
-  {id:"c13", t:"Recorrido de grafiti", place:"Comuna 13, Medellín", region:"Antioquia", cat:"Cultura", host:"Colectivo Muros que Hablan", hostShort:"Colectivo", org:"Colectivo Muros que Hablan", since:"Anfitriones desde 2019", price:70000, dur:"3 h", group:"Máx. 12", lang:"ES · EN", rating:4.8, reviews:342, comm:true, c:["#D3263A","#F2C230","#3F6FDB"], hc:"#D3263A",
+  {id:"c13", t:"Recorrido de grafiti", place:"Comuna 13, Medellín", region:"Andina", img:"c13", cat:"Cultura", host:"Colectivo Muros que Hablan", hostShort:"Colectivo", org:"Colectivo Muros que Hablan", since:"Anfitriones desde 2019", price:70000, dur:"3 h", group:"Máx. 12", lang:"ES · EN", rating:4.8, reviews:342, comm:true, c:["#D3263A","#F2C230","#3F6FDB"], hc:"#D3263A",
    desc:"Jóvenes del barrio cuentan la historia de la comuna a través de sus murales, con parada en las escaleras eléctricas y taller de aerosol.",
    inc:["Guía del barrio","Taller corto de aerosol","Bebida típica"], exc:["Transporte al Metro San Javier"],
    meet:"Estación San Javier del Metro, salida hacia la Comuna 13.", access:"Tramos con escaleras eléctricas y escalones. Acceso parcial para movilidad reducida.",
    rev:[{n:"Camila · Cali",s:5,t:"Escuchar la historia de alguien que la vivió cambia todo."},{n:"Andrés · Pereira",s:4,t:"Muy bueno, aunque hay mucha gente los fines de semana."}]},
-  {id:"pal", t:"Cocina y tambor", place:"San Basilio de Palenque, Bolívar", region:"Caribe", cat:"Gastronomía", host:"Cocineras de Palenque", hostShort:"Cocineras", org:"Cocineras de Palenque", since:"Anfitrionas desde 2022", price:120000, dur:"5 h", group:"Máx. 10", lang:"ES", rating:5.0, reviews:61, comm:true, c:["#B34A1E","#F29E4C","#FFE0A3"], hc:"#B34A1E",
+  {id:"pal", t:"Cocina y tambor", place:"San Basilio de Palenque, Bolívar", region:"Caribe", img:"pal", cat:"Gastronomía", host:"Cocineras de Palenque", hostShort:"Cocineras", org:"Cocineras de Palenque", since:"Anfitrionas desde 2022", price:120000, dur:"5 h", group:"Máx. 10", lang:"ES", rating:5.0, reviews:61, comm:true, c:["#B34A1E","#F29E4C","#FFE0A3"], hc:"#B34A1E",
    desc:"Cocina arroz con coco y dulces tradicionales con las cocineras del pueblo y cierra con una clase de tambor palenquero.",
    inc:["Clase de cocina y almuerzo","Clase de tambor","Recorrido por el pueblo"], exc:["Transporte desde Cartagena (se puede agregar)"],
    meet:"Plaza principal de San Basilio de Palenque.", access:"Calles destapadas. Consultar con las anfitrionas para movilidad reducida.",
    rev:[{n:"Laura · Medellín",s:5,t:"Las cocineras son unas maestras. Me llevé recetas y una amistad."}]},
-  {id:"bal", t:"Ballenas en el Pacífico", place:"Nuquí, Chocó", region:"Pacífico", cat:"Naturaleza", host:"Guías de Jurubirá", hostShort:"Guías", org:"Guías de Jurubirá", since:"Anfitriones desde 2020", price:180000, dur:"6 h", group:"Máx. 6", lang:"ES", rating:4.9, reviews:94, comm:true, c:["#0F4C6B","#3FA7C4","#BFE7EF"], hc:"#0F4C6B",
+  {id:"bal", t:"Ballenas en el Pacífico", place:"Nuquí, Chocó", region:"Pacífico", img:"bal", cat:"Naturaleza", host:"Guías de Jurubirá", hostShort:"Guías", org:"Guías de Jurubirá", since:"Anfitriones desde 2020", price:180000, dur:"6 h", group:"Máx. 6", lang:"ES", rating:4.9, reviews:94, comm:true, c:["#0F4C6B","#3FA7C4","#BFE7EF"], hc:"#0F4C6B",
    desc:"Salida en lancha con guías de la comunidad para ver ballenas jorobadas (julio a octubre), con almuerzo típico en la playa.",
    inc:["Lancha y chaleco salvavidas","Almuerzo típico","Guía local"], exc:["Vuelo a Nuquí"],
    meet:"Muelle de Jurubirá, 7:00 a. m.", access:"Requiere subir a lancha. No apto para embarazadas.",
    rev:[{n:"Sara · Bogotá",s:5,t:"Vimos una ballena con su cría a pocos metros. Los guías cuidan mucho a los animales."}]},
-  {id:"cano", t:"Caño Cristales en un día", place:"La Macarena, Meta", region:"Llanos", cat:"Naturaleza", host:"Macarena Viajes S.A.S.", hostShort:"Macarena Viajes", org:"Macarena Viajes S.A.S.", since:"Operador desde 2015", price:260000, dur:"8 h", group:"Máx. 15", lang:"ES", rating:4.6, reviews:210, comm:false, c:["#7A1E3A","#E0506B","#9ED1A5"], hc:"#7A1E3A",
+  {id:"cano", t:"Caño Cristales en un día", place:"La Macarena, Meta", region:"Orinoquía", img:"cano", cat:"Naturaleza", host:"Macarena Viajes S.A.S.", hostShort:"Macarena Viajes", org:"Macarena Viajes S.A.S.", since:"Operador desde 2015", price:260000, dur:"8 h", group:"Máx. 15", lang:"ES", rating:4.6, reviews:210, comm:false, c:["#7A1E3A","#E0506B","#9ED1A5"], hc:"#7A1E3A",
    desc:"Caminata guiada hasta el río de los cinco colores, con transporte desde el pueblo y charla de conservación.",
    inc:["Transporte en el parque","Guía certificado","Charla de conservación"], exc:["Tasa de ingreso al parque"],
    meet:"Oficina del operador en La Macarena, 6:30 a. m.", access:"Caminata de 6 km en terreno irregular.",
    rev:[{n:"Felipe · Bucaramanga",s:4,t:"Paisaje increíble. La logística podría ser más clara."}]},
-  {id:"way", t:"Tejido wayuu", place:"Riohacha, La Guajira", region:"Caribe", cat:"Cultura", host:"Tejedoras de Kamüshiwoü", hostShort:"Tejedoras", org:"Tejedoras de Kamüshiwoü", since:"Anfitrionas desde 2023", price:85000, dur:"3 h", group:"Máx. 8", lang:"ES · Wayuunaiki", rating:4.9, reviews:47, comm:true, c:["#C2522E","#E8B04B","#F7E3C0"], hc:"#C2522E",
+  {id:"way", t:"Tejido wayuu", place:"Riohacha, La Guajira", region:"Caribe", img:"way", cat:"Cultura", host:"Tejedoras de Kamüshiwoü", hostShort:"Tejedoras", org:"Tejedoras de Kamüshiwoü", since:"Anfitrionas desde 2023", price:85000, dur:"3 h", group:"Máx. 8", lang:"ES · Wayuunaiki", rating:4.9, reviews:47, comm:true, c:["#C2522E","#E8B04B","#F7E3C0"], hc:"#C2522E",
    desc:"Aprende la puntada básica de la mochila wayuu en una ranchería y el significado de los kanaas (dibujos) que cuentan su historia.",
    inc:["Taller de tejido","Materiales","Bebida tradicional"], exc:["Transporte a la ranchería"],
    meet:"Malecón de Riohacha, frente al muelle turístico.", access:"Ranchería en terreno plano y arenoso.",
-   rev:[{n:"Juliana · Barranquilla",s:5,t:"Entender lo que significa cada dibujo hace que valores mucho más una mochila."}]}
+   rev:[{n:"Juliana · Barranquilla",s:5,t:"Entender lo que significa cada dibujo hace que valores mucho más una mochila."}]},
+  {id:"tar", t:"Lagos de Tarapoto en canoa", place:"Puerto Nariño, Amazonas", region:"Amazonía", img:"pnar", cat:"Naturaleza", host:"Guías Tikuna de Puerto Nariño", hostShort:"Guías Tikuna", org:"Guías Tikuna de Puerto Nariño", since:"Anfitriones desde 2021", price:150000, dur:"5 h", group:"Máx. 8", lang:"ES · Tikuna", rating:4.9, reviews:73, comm:true, c:["#1E5B3A","#6FA86B","#CFE6C5"], hc:"#1E5B3A",
+   desc:"Navega en canoa con guías tikuna hasta los lagos de Tarapoto, donde es común ver delfines rosados, y aprende sobre las plantas medicinales de la selva.",
+   inc:["Canoa y chaleco salvavidas","Guía tikuna","Almuerzo con pescado de río"], exc:["Lancha desde Leticia"],
+   meet:"Muelle de Puerto Nariño, 7:30 a. m.", access:"Requiere subir a canoa. Caminata corta en terreno húmedo.",
+   rev:[{n:"Daniela · Cali",s:5,t:"Vimos delfines rosados y aprendimos muchísimo de la selva con los guías."}]},
+  {id:"rai", t:"Johnny Cay y cocina raizal", place:"San Andrés, Archipiélago", region:"Insular", img:"jcay", cat:"Gastronomía", host:"Miss Hazel Bryan", hostShort:"Hazel", org:"Cocina raizal de La Loma", since:"Anfitriona desde 2022", price:140000, dur:"6 h", group:"Máx. 10", lang:"ES · EN · Creole", rating:4.8, reviews:88, comm:true, c:["#0B6E99","#5CC6D0","#E8F7F7"], hc:"#0B6E99",
+   desc:"Mañana en lancha a Johnny Cay y almuerzo de rondón (sopa de coco con pescado) preparado por una familia raizal, con historias del creole sanandresano.",
+   inc:["Lancha ida y vuelta","Almuerzo de rondón","Charla de cultura raizal"], exc:["Tasa de ingreso a Johnny Cay"],
+   meet:"Muelle de la Casa de la Cultura, North End.", access:"Requiere subir a lancha. Playa de arena.",
+   rev:[{n:"Mateo · Bogotá",s:5,t:"El rondón de Hazel es otra cosa. Y Johnny Cay es tan lindo como en las fotos."}]}
 ];
 const CATS = ["Todos","Café","Cultura","Naturaleza","Gastronomía"];
-const DESTS = ["Todo Colombia","Eje Cafetero","Antioquia","Caribe","Pacífico","Llanos"];
+const REGIONS = [
+  {id:"Andina", d:"Café, montañas y ciudades", img:"cocora"},
+  {id:"Caribe", d:"Mar, música y culturas afro e indígenas", img:"ctg"},
+  {id:"Pacífico", d:"Selva, ballenas y playas", img:"nuqui"},
+  {id:"Orinoquía", d:"Llanos, ríos y el río de los cinco colores", img:"manto"},
+  {id:"Amazonía", d:"Selva, ríos y pueblos indígenas", img:"amaz"},
+  {id:"Insular", d:"San Andrés y Providencia, cultura raizal", img:"sai"}
+];
+const DESTS = ["Todo Colombia", ...REGIONS.map(r=>r.id)];
+/* Fotos de Wikimedia Commons (licencias libres, ver créditos en "Sobre el proyecto") */
+const IMG = {
+  cafe:["5/53/Chinchin%C3%A1_cafetal.jpg","Ricohin","CC BY 3.0"],
+  c13:["0/08/Graffiti_in_Comuna_13%2C_Medell%C3%ADn_03.jpg","Bernard Gagnon","CC BY-SA 4.0"],
+  pal:["0/0b/Palenqueras_Cartagena.jpg","Franciscokarriere","CC BY-SA 4.0"],
+  bal:["f/f6/Humpback_whale_breaching_off_the_coast_of_Choco%2C_Colombia.jpg","Dwayne Reilander","CC BY-SA 4.0"],
+  cano:["c/ca/Los_Ocho_en_Ca%C3%B1o_Cristales.jpg","Gicaman","CC BY-SA 4.0"],
+  way:["b/b9/Tejido_Way%C3%BAu.jpg","AteneaSGP","CC BY-SA 4.0"],
+  pnar:["f/fc/Puerto_Nari%C3%B1o_Departamento_del_Amazonas.jpg","Gatocalvo","CC BY-SA 4.0"],
+  jcay:["6/67/Johnny_Cay_%288321320837%29.jpg","Joao Carlos Medau","CC BY 2.0"],
+  cocora:["a/af/Valle_de_Cocora%2C_Colombia_02.jpg","Bernard Gagnon","CC BY-SA 4.0"],
+  ctg:["d/da/Ciudad_Amurallada_Cartagena_de_Indias.jpg","Angela bustosc91","CC BY-SA 4.0"],
+  nuqui:["b/be/Bello_atardecer_en_las_playas_de_Nuqu%C3%AD%2C_Choc%C3%B3.jpg","Bernardo David David","CC BY-SA 4.0"],
+  manto:["e/e7/Cascadas_Manto_de_La_Virgen_-_Ca%C3%B1o_Cristales_-_La_Macarena_-_Meta_-_Colombia.jpg","Gicaman","CC BY-SA 4.0"],
+  amaz:["e/e0/Atardecer_en_el_R%C3%ADo_amamazonas_Leticia%2CColombia.jpg","Josefordonez","CC BY-SA 4.0"],
+  sai:["1/1d/La_belleza_del_Mar_Caribe%2C_La_Isla_de_San_Andr%C3%A9s.jpg","Dasha Shishkova","CC BY-SA 4.0"]
+};
+const imgUrl = (k,w=960) => { const f = IMG[k][0]; return "https://thumb.wikimedia.org/wikipedia/commons/thumb/" + f + "/" + w + "px-" + f.split("/").pop(); };
 const DATES = ["Este finde","Próxima semana","Elegir fechas"];
 const SLOTS = ["Mañana","Tarde","Noche"], HOURS = ["8:00 a. m.","2:00 p. m.","6:00 p. m."];
 const EXTRAS = [{id:"trans",label:"Transporte",p:25000},{id:"lunch",label:"Almuerzo típico",p:30000},{id:"guide",label:"Guía bilingüe",p:20000}];
@@ -329,15 +380,8 @@ const save = () => { store.set("liked",[...S.liked]); store.set("trips",S.trips)
 /* ------------------------------------------------------------------
    ILUSTRACIONES E ICONOS
 ------------------------------------------------------------------ */
-let artN = 0;
-function art(p){
-  const [a,b,c] = p.c; const id = "g" + (artN++);
-  return `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}"/><stop offset="1" stop-color="#fff"/></linearGradient></defs>
-    <rect width="200" height="200" fill="url(#${id})"/><circle cx="150" cy="58" r="22" fill="#fff" opacity=".85"/>
-    <path d="M0 130 Q40 80 80 115 T160 100 T200 110 V200 H0Z" fill="${b}"/>
-    <path d="M0 160 Q50 120 100 150 T200 140 V200 H0Z" fill="${a}"/>
-    <path d="M0 185 Q60 165 120 182 T200 178 V200 H0Z" fill="${a}" opacity=".7"/></svg>`;
+function art(p,w=960,alt=""){
+  return `<img class="ph" src="${imgUrl(p.img,w)}" alt="${alt}" loading="lazy" decoding="async" onerror="this.style.opacity=0" style="background:${p.c[1]}">`;
 }
 const I = {
   back:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>',
@@ -413,9 +457,11 @@ home(){
     <form class="search" data-form="search" role="search">${I.search}<input id="q" type="search" placeholder="Café, ballenas, Salento…" value="${esc(S.q)}" aria-label="Buscar planes" enterkeyhint="search"></form>
     <div class="flagbar"><i></i><i></i><i></i></div>
     </div>
-    <div><div class="label">Destino</div><div class="chips">${DESTS.map(d=>`<button class="chip ${d===S.dest?'on':''}" data-act="dest" data-v="${d}">${d}</button>`).join("")}</div></div>
+    <div><div class="label">Región</div><div class="chips">${DESTS.map(d=>`<button class="chip ${d===S.dest?'on':''}" data-act="dest" data-v="${d}">${d}</button>`).join("")}</div></div>
     <div><div class="label">Fechas</div><div class="chips">${DATES.map((d,i)=>`<button class="chip ${i===S.dates?'on':''}" data-act="date" data-v="${i}">${d}</button>`).join("")}</div></div>
     <button class="btn blue" data-act="go" data-v="discover">Explorar planes</button>
+    <div class="between"><h2 class="h2">Explora por región</h2><span class="small">${REGIONS.length} regiones</span></div>
+    <div class="regions">${REGIONS.map(r=>`<button class="rcard" data-act="region" data-v="${r.id}"><img class="ph" src="${imgUrl(r.img,960)}" alt="" loading="lazy" decoding="async" onerror="this.style.opacity=0"><div><b>${r.id}</b><span>${r.d} · ${PLANS.filter(p=>p.region===r.id).length} ${PLANS.filter(p=>p.region===r.id).length===1?"plan":"planes"}</span></div></button>`).join("")}</div>
     ${next?`<button class="card row" data-act="tab" data-v="trips" style="text-align:left;cursor:pointer"><div style="width:48px;height:48px;border-radius:12px;overflow:hidden;flex:none">${art(PLANS.find(p=>p.id===next.plan))}</div><div style="flex:1"><div class="small">Tu próximo plan</div><div style="font-weight:600;font-size:13px">${esc(next.title)}</div></div>${I.chev}</button>`:""}
     <div class="card" style="background:var(--navy);color:#fff;border:0;display:flex;gap:12px;align-items:center">
       <div style="flex:1"><span class="badge">Comunitario</span><div style="font-weight:600;font-size:15px;line-height:1.3;margin-top:6px">El 85 % de lo que pagas llega a la comunidad</div></div>
@@ -432,9 +478,12 @@ discover(){
     <div class="topbar">${backBtn("home")}<div class="title">${S.dest} · ${DATES[S.dates]}</div><div style="width:40px"></div></div>
     <form class="search" data-form="search" role="search">${I.search}<input id="q" type="search" placeholder="Buscar en ${esc(S.dest)}" value="${esc(S.q)}" aria-label="Buscar planes" enterkeyhint="search"></form>
     <h1 class="h" style="font-size:20px">Planes locales <span>· ${list.length} ${list.length===1?"encontrado":"encontrados"}</span></h1>
+    <div class="chips">${DESTS.map(d=>`<button class="chip ${d===S.dest?'on':''}" data-act="dest" data-v="${d}">${d}</button>`).join("")}</div>
     <div class="chips">${CATS.map(c=>`<button class="chip ${c===S.cat?'on':''}" data-act="cat" data-v="${c}">${c}</button>`).join("")}</div>
     <div class="chips"><button class="chip y ${S.comm?'on':''}" data-act="comm" aria-pressed="${S.comm}">★ Solo comunitarios</button></div>
-    <div class="plans">${list.length? list.map(card).join("") : `<div class="empty">No hay planes con estos filtros.<button class="btn ghost" data-act="clear" style="width:auto">Quitar filtros</button></div>`}</div>
+    ${!list.length ? `<div class="plans"><div class="empty">No hay planes con estos filtros.<button class="btn ghost" data-act="clear" style="width:auto">Quitar filtros</button></div></div>`
+      : S.dest==="Todo Colombia" ? REGIONS.filter(r=>list.some(p=>p.region===r.id)).map(r=>`<div class="rhead"><h3>${r.id}</h3><span class="small">${r.d}</span></div><div class="plans">${list.filter(p=>p.region===r.id).map(card).join("")}</div>`).join("")
+      : `<div class="plans">${list.map(card).join("")}</div>`}
   </div>`;
 },
 detail(){
@@ -448,7 +497,7 @@ detail(){
     rev:p.rev.map(r=>`<div class="review"><div class="between"><b style="font-size:12.5px">${r.n}</b><span class="stars">${"★".repeat(r.s)}</span></div><p>${r.t}</p></div>`).join("")
   }[S.tab];
   return `<div class="screen nodock">
-    <div class="hero">${art(p)}
+    <div class="hero">${art(p,1920,p.t)}
       <div class="bar">${backBtn("discover")}
         <div class="row" style="gap:8px"><button class="icon-btn" data-act="share" aria-label="Compartir">${I.share}</button>
         <button class="icon-btn" data-act="like" data-v="${p.id}" aria-label="${on?'Quitar de guardados':'Guardar'}" style="color:${on?'var(--red)':'var(--ink)'}">${on?I.heart:I.heartO}</button></div></div>
@@ -629,6 +678,8 @@ about(){
       <div class="done"><span><b>7</b> · Confirmación y Mi viaje</span></div>
       <div class="done"><span><b>8</b> · Valorar y recomendar</span></div>
     </div>
+    <div class="label">Créditos de fotos (Wikimedia Commons)</div>
+    <div class="card credits">${Object.values(IMG).map(([f,a,l])=>`<span>${decodeURIComponent(f.split("/").pop()).replace(/_/g," ")} · ${a} · <a href="https://commons.wikimedia.org/wiki/File:${f.split("/").pop()}" target="_blank" rel="noopener">${l}</a></span>`).join("")}</div>
     <p class="small" style="margin:0">Prototipo académico. Los planes, anfitriones y precios son ejemplos; ningún pago es real.</p>
   </div>`;
 },
@@ -747,6 +798,7 @@ app.addEventListener("click", e=>{
     case "back": back(v); break;
     case "tab": S.stack=[]; render(v, S.screen===v?"none":"enter"); break;
     case "dest": S.dest=v; rerender(); break;
+    case "region": S.dest=v; S.cat="Todos"; S.q=""; go("discover"); break;
     case "date": S.dates=+v; rerender(); break;
     case "cat": S.cat=v; rerender(); break;
     case "comm": S.comm=!S.comm; rerender(); break;
@@ -819,7 +871,7 @@ function fitScreen(){
     document.documentElement.style.setProperty("--appH", h + "px");
   }
 }
-fitScreen(); addEventListener("resize", fitScreen); addEventListener("orientationchange", ()=>setTimeout(fitScreen,300));
+/* fitScreen() desactivado: en iOS 26.0 la vista instalada queda recortada abajo (Apple lo corrigió en iOS 26.1). */
 
 /* Inicio */
 render("splash","none");
