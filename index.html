@@ -89,6 +89,8 @@ button{font:inherit;color:inherit}
 .tabbar .dot{position:absolute;top:8px;right:calc(50% - 16px);width:8px;height:8px;border-radius:50%;background:var(--yellow)}
 
 /* modos de pantalla (ver Perfil) */
+/* iPhone instalado: iOS difumina la franja bajo el reloj, así que el contenido arranca un poco más abajo */
+html.iosapp{--st:calc(env(safe-area-inset-top,0px) + 24px)}
 html.sm-b,html.sm-b body,html.sm-c,html.sm-c body{height:auto;min-height:100%;overflow:hidden}
 html.sm-b #app{position:absolute;top:0;left:0;right:0;bottom:auto;height:100lvh}
 html.sm-c #app{position:absolute;top:0;left:0;right:0;bottom:auto;height:var(--scrH,100vh)}
@@ -114,7 +116,7 @@ html.sm-c #app{position:absolute;top:0;left:0;right:0;bottom:auto;height:var(--s
 
 /* fotos y regiones */
 .ph{width:100%;height:100%;object-fit:cover;display:block}
-.regions{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin-inline:-18px;padding-inline:18px;scroll-snap-type:x mandatory}
+.regions{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin-inline:-18px;padding-inline:18px;scroll-padding-inline:18px;scroll-snap-type:x mandatory}
 .regions::-webkit-scrollbar{display:none}
 .rcard{flex:0 0 64%;height:190px;border-radius:20px;overflow:hidden;position:relative;border:0;padding:0;cursor:pointer;scroll-snap-align:start;color:#fff;text-align:left;background:var(--navy)}
 .rcard img{position:absolute;inset:0}
@@ -174,7 +176,7 @@ html.sm-c #app{position:absolute;top:0;left:0;right:0;bottom:auto;height:var(--s
 .pcard .price small{font-weight:400;color:var(--muted);font-size:10.5px}
 .pcard .free{font-size:10.5px;color:var(--green);font-weight:500}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);font-size:13px;padding:28px 10px;display:flex;flex-direction:column;gap:10px;align-items:center}
-.hscroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin-inline:-18px;padding-inline:18px;scroll-snap-type:x mandatory}
+.hscroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin-inline:-18px;padding-inline:18px;scroll-padding-inline:18px;scroll-snap-type:x mandatory}
 .hscroll::-webkit-scrollbar{display:none}
 .hscroll .pcard{flex:0 0 44%;scroll-snap-align:start}
 
@@ -940,6 +942,7 @@ function screenProbe(){
 }
 function applyScreenMode(){
   const r=document.documentElement; r.classList.remove("sm-b","sm-c"); if(SCREEN_MODE!=="a") r.classList.add("sm-"+SCREEN_MODE);
+  r.classList.toggle("iosapp", /iPhone|iPod/.test(navigator.userAgent) && (navigator.standalone || matchMedia("(display-mode: standalone)").matches));
   r.style.setProperty("--scrH", (matchMedia("(orientation: portrait)").matches ? screen.height : screen.width) + "px");
 }
 function fitScreen(){
